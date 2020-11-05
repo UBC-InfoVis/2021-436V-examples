@@ -8,5 +8,5 @@
     "build": "echo This is a static template, there is no bundler or bundling involved!"
   },
   "author": "Michael Oppermann",
-  "license": "CC-BY-4.0 license",
+  "license": "CC-BY-4.0 license"
 }
