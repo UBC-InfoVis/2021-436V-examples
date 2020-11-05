@@ -5,7 +5,7 @@ const circle = svg.append('circle')
     .attr('cx', 100)
     .attr('cy', 100) 
     .attr('fill', 'none')   
-    .attr('stroke', 'green') 
+    .attr('stroke', 'blue') 
     .attr('r', 60);
 
 function update(radius) {
