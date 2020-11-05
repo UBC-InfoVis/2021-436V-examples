@@ -1,2 +1,2 @@
-# Interactive D3 Bar Chart Example
+# D3 Interactive Bar Chart
 

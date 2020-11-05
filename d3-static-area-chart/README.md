@@ -1,4 +1,1 @@
-# Static D3 Bar Chart Example
-
-* Class-based project structure
-* Not interactive
+# D3 Static Area Chart
