@@ -9,11 +9,10 @@ class Barchart {
     // Configuration object with defaults
     this.config = {
       parentElement: _config.parentElement,
-      containerWidth: _config.containerWidth || 710,
-      containerHeight: _config.containerHeight || 200,
-      margin: _config.margin || {top: 10, right: 5, bottom: 25, left: 30},
-      reverseOrder: _config.reverseOrder || false,
-      tooltipPadding: _config.tooltipPadding || 15
+      colorScale: _config.colorScale,
+      containerWidth: _config.containerWidth || 260,
+      containerHeight: _config.containerHeight || 300,
+      margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 40},
     }
     this.data = data;
     this.initVis();
@@ -30,6 +29,12 @@ class Barchart {
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
     // Initialize scales and axes
+    
+    // Initialize scales
+    vis.colorScale = d3.scaleOrdinal()
+        .range(['#d3eecd', '#7bc77e', '#2a8d46']) // light green to dark green
+        .domain(['Easy','Intermediate','Difficult']);
+    
     // Important: we flip array elements in the y output range to position the rectangles correctly
     vis.yScale = d3.scaleLinear()
         .range([vis.height, 0]) 
@@ -39,12 +44,12 @@ class Barchart {
         .paddingInner(0.2);
 
     vis.xAxis = d3.axisBottom(vis.xScale)
+        .ticks(['Easy', 'Intermediate', 'Difficult'])
         .tickSizeOuter(0);
 
     vis.yAxis = d3.axisLeft(vis.yScale)
         .ticks(6)
         .tickSizeOuter(0)
-        .tickFormat(d3.formatPrefix('.0s', 1e6)); // Format y-axis ticks as millions
 
     // Define size of SVG drawing area
     vis.svg = d3.select(vis.config.parentElement)
@@ -63,6 +68,14 @@ class Barchart {
     // Append y-axis group 
     vis.yAxisG = vis.chart.append('g')
         .attr('class', 'axis y-axis');
+
+    // Append axis title
+    vis.svg.append('text')
+        .attr('class', 'axis-title')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dy', '.71em')
+        .text('Trails');
   }
 
   /**
@@ -71,18 +84,24 @@ class Barchart {
   updateVis() {
     let vis = this;
 
-    // Reverse column order depending on user selection
-    if (vis.config.reverseOrder) {
-      vis.data.reverse();
-    }
+    // Prepare data: count number of trails in each difficulty category
+    // i.e. [{ key: 'easy', count: 10 }, {key: 'intermediate', ...
+    const aggregatedDataMap = d3.rollups(vis.data, v => v.length, d => d.difficulty);
+    vis.aggregatedData = Array.from(aggregatedDataMap, ([key, count]) => ({ key, count }));
 
-    // Specificy x- and y-accessor functions
-    vis.xValue = d => d.region;
-    vis.yValue = d => d.population;
+    const orderedKeys = ['Easy', 'Intermediate', 'Difficult'];
+    vis.aggregatedData = vis.aggregatedData.sort((a,b) => {
+      return orderedKeys.indexOf(a.key) - orderedKeys.indexOf(b.key);
+    });
+
+    // Specificy accessor functions
+    vis.colorValue = d => d.key;
+    vis.xValue = d => d.key;
+    vis.yValue = d => d.count;
 
     // Set the scale input domains
-    vis.xScale.domain(vis.data.map(vis.xValue));
-    vis.yScale.domain([0, d3.max(vis.data, vis.yValue)]);
+    vis.xScale.domain(vis.aggregatedData.map(vis.xValue));
+    vis.yScale.domain([0, d3.max(vis.aggregatedData, vis.yValue)]);
 
     vis.renderVis();
   }
@@ -95,40 +114,17 @@ class Barchart {
 
     // Add rectangles
     let bars = vis.chart.selectAll('.bar')
-        .data(vis.data, vis.xValue)
-      .join('rect');
-    
-    bars.style('opacity', 0.5)
-      .transition().duration(1000)
-        .style('opacity', 1)
+        .data(vis.aggregatedData, vis.xValue)
+      .join('rect')
         .attr('class', 'bar')
         .attr('x', d => vis.xScale(vis.xValue(d)))
         .attr('width', vis.xScale.bandwidth())
         .attr('height', d => vis.height - vis.yScale(vis.yValue(d)))
         .attr('y', d => vis.yScale(vis.yValue(d)))
-    
-    // Tooltip event listeners
-    bars
-        .on('mouseover', (event,d) => {
-          d3.select('#tooltip')
-            .style('opacity', 1)
-            // Format number with million and thousand separator
-            .html(`<div class="tooltip-label">Population</div>${d3.format(',')(d.population)}`);
-        })
-        .on('mousemove', (event) => {
-          d3.select('#tooltip')
-            .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
-            .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
-        })
-        .on('mouseleave', () => {
-          d3.select('#tooltip').style('opacity', 0);
-        });
+        .attr('fill', d => vis.colorScale(vis.colorValue(d)));
 
     // Update axes
-    vis.xAxisG
-        .transition().duration(1000)
-        .call(vis.xAxis);
-
+    vis.xAxisG.call(vis.xAxis);
     vis.yAxisG.call(vis.yAxis);
   }
 }

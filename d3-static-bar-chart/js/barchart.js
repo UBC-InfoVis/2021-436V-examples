@@ -39,7 +39,7 @@ class Barchart {
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
-    // Initialize scales and axes
+    // Initialize scales
     vis.xScale = d3.scaleLinear()
         .range([0, vis.width]);
 
@@ -63,16 +63,16 @@ class Barchart {
     // Append group element that will contain our actual chart 
     // and position it according to the given margin config
     vis.chart = vis.svg.append('g')
-        .attr('class', 'axis x-axis')
         .attr('transform', `translate(${vis.config.margin.left},${vis.config.margin.top})`);
 
     // Append empty x-axis group and move it to the bottom of the chart
     vis.xAxisG = vis.chart.append('g')
-        .attr('class', 'axis y-axis')
+        .attr('class', 'axis x-axis')
         .attr('transform', `translate(0,${vis.height})`);
     
     // Append y-axis group 
-    vis.yAxisG = vis.chart.append('g');
+    vis.yAxisG = vis.chart.append('g')
+        .attr('class', 'axis y-axis');
 
     // Append titles, legends and other static elements here
     // ...

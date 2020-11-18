@@ -6,36 +6,24 @@ class Scatterplot {
    * @param {Array}
    */
   constructor(_config, data) {
-    // Configuration object with defaults
-    // Important: depending on your vis and the type of interactivity you need
-    // you might want to use getter and setter methods for individual attributes
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 600,
       containerHeight: _config.containerHeight || 400,
-      margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 35}
+      margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 35},
+      tooltipPadding: _config.tooltipPadding || 15
     }
     this.data = data;
     this.initVis();
   }
   
   /**
-   * This function contains all the code that gets excecuted only once at the beginning.
-   * (can be also part of the class constructor)
    * We initialize scales/axes and append static elements, such as axis titles.
-   * If we want to implement a responsive visualization, we would move the size
-   * specifications to the updateVis() function.
    */
   initVis() {
-    // We recommend avoiding simply using the this keyword within complex class code
-    // involving SVG elements because the scope of this will change and it will cause
-    // undesirable side-effects. Instead, we recommend creating another variable at
-    // the start of each function to store the this-accessor
     let vis = this;
 
     // Calculate inner chart size. Margin specifies the space around the actual chart.
-    // You need to adjust the margin config depending on the types of axis tick labels
-    // and the position of axis titles (margin convetion: https://bl.ocks.org/mbostock/3019563)
     vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
     vis.height = vis.config.containerHeight - vis.config.margin.top - vis.config.margin.bottom;
 
@@ -99,9 +87,7 @@ class Scatterplot {
   }
 
   /**
-   * This function contains all the code to prepare the data before we render it.
-   * In some cases, you may not need this function but when you create more complex visualizations
-   * you will probably want to organize your code in multiple functions.
+   * Prepare the data and scales before we render it.
    */
   updateVis() {
     let vis = this;
@@ -119,22 +105,41 @@ class Scatterplot {
   }
 
   /**
-   * This function contains the D3 code for binding data to visual elements.
-   * We call this function every time the data or configurations change.
+   * Bind data to visual elements.
    */
   renderVis() {
     let vis = this;
 
     // Add circles
-    vis.chart.selectAll('.point')
-        .data(vis.data)
-        .enter()
-      .append('circle')
+    const circles = vis.chart.selectAll('.point')
+        .data(vis.data, d => d.trail)
+      .join('circle')
         .attr('class', 'point')
         .attr('r', 4)
         .attr('cy', d => vis.yScale(vis.yValue(d)))
         .attr('cx', d => vis.xScale(vis.xValue(d)))
         .attr('fill', d => vis.colorScale(vis.colorValue(d)));
+
+    // Tooltip event listeners
+    circles
+        .on('mouseover', (event,d) => {
+          d3.select('#tooltip')
+            .style('display', 'block')
+            .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')   
+            .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
+            .html(`
+              <div class="tooltip-title">${d.trail}</div>
+              <div><i>${d.region}</i></div>
+              <ul>
+                <li>${d.distance} km, ~${d.time} hours</li>
+                <li>${d.difficulty}</li>
+                <li>${d.season}</li>
+              </ul>
+            `);
+        })
+        .on('mouseleave', () => {
+          d3.select('#tooltip').style('display', 'none');
+        });
     
     // Update the axes/gridlines
     // We use the second .call() to remove the axis and just show gridlines
