@@ -30,6 +30,15 @@ h1 {
 .point:hover {
   stroke: #333;
 }
+.bar {
+  shape-rendering: crispEdges;
+}
+.bar:hover {
+  stroke: #777;
+}
+.bar.active {
+  stroke: #333;
+}
 
 /* Axes */
 .axis line {

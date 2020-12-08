@@ -1,8 +1,12 @@
-/**
- * Load data from CSV file asynchronously and render scatter plot
- */
-let data, scatterplot, barchart;
 
+// Global objects
+let data, scatterplot, barchart;
+let difficultyFilter = [];
+
+
+/**
+ * Load data from CSV file asynchronously and render charts
+ */
 d3.csv('data/vancouver_trails.csv')
   .then(_data => {
     data = _data;
@@ -32,8 +36,19 @@ d3.csv('data/vancouver_trails.csv')
 
 
 /**
- * Event listener: use color legend as filter
+ * Use bar chart as filter and update scatter plot accordingly
  */
+function filterData() {
+  if (difficultyFilter.length == 0) {
+    scatterplot.data = data;
+  } else {
+    scatterplot.data = data.filter(d => difficultyFilter.includes(d.difficulty));
+  }
+  scatterplot.updateVis();
+}
+
+
+/*
 d3.selectAll('.legend-btn').on('click', function() {
   // Toggle 'inactive' class
   d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
@@ -48,3 +63,4 @@ d3.selectAll('.legend-btn').on('click', function() {
   scatterplot.data = data.filter(d => selectedDifficulty.includes(d.difficulty));
   scatterplot.updateVis();
 });
+*/

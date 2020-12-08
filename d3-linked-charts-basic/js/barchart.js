@@ -113,7 +113,7 @@ class Barchart {
     let vis = this;
 
     // Add rectangles
-    let bars = vis.chart.selectAll('.bar')
+    const bars = vis.chart.selectAll('.bar')
         .data(vis.aggregatedData, vis.xValue)
       .join('rect')
         .attr('class', 'bar')
@@ -121,7 +121,17 @@ class Barchart {
         .attr('width', vis.xScale.bandwidth())
         .attr('height', d => vis.height - vis.yScale(vis.yValue(d)))
         .attr('y', d => vis.yScale(vis.yValue(d)))
-        .attr('fill', d => vis.colorScale(vis.colorValue(d)));
+        .attr('fill', d => vis.colorScale(vis.colorValue(d)))
+        .on('click', function(event, d) {
+          const isActive = difficultyFilter.includes(d.key);
+          if (isActive) {
+            difficultyFilter = difficultyFilter.filter(f => f !== d.key); // Remove filter
+          } else {
+            difficultyFilter.push(d.key); // Append filter
+          }
+          filterData(); // Call global function to update scatter plot
+          d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
+        });
 
     // Update axes
     vis.xAxisG.call(vis.xAxis);
