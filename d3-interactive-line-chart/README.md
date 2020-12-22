@@ -1,1 +1,1 @@
-# D3 Static Area Chart
+# D3 Interactive Line Chart
