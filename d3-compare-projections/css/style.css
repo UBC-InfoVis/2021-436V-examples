@@ -5,6 +5,10 @@ body {
   background: #f7f7f7;
 }
 
+.container {
+  display: flex;
+}
+
 .geo-path {
   fill: #383838;
 }
