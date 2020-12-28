@@ -3,12 +3,6 @@
  */
 d3.json('data/canada_provinces.topo.json')
   .then(data => {
-    /*
-    const geoMap1 = new GeoMap({
-      parentElement: '#albersUsa',
-      projection: 'albersUsa'
-    }, data);
-    */
     // Mercator projection
     const geoMap1 = new GeoMap({ 
       parentElement: '#mercator',
