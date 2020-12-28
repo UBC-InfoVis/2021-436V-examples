@@ -5,7 +5,7 @@ class StackedAreaChart {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, data) {
+  constructor(_config, _data) {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 800,
@@ -13,7 +13,7 @@ class StackedAreaChart {
       margin: _config.margin || {top: 25, right: 12, bottom: 30, left: 100},
       displayType: 'absolute'
     }
-    this.data = data;
+    this.data = _data;
     this.initVis();
   }
   

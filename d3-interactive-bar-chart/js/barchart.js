@@ -5,7 +5,7 @@ class Barchart {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, data) {
+  constructor(_config, _data) {
     // Configuration object with defaults
     this.config = {
       parentElement: _config.parentElement,
@@ -15,7 +15,7 @@ class Barchart {
       reverseOrder: _config.reverseOrder || false,
       tooltipPadding: _config.tooltipPadding || 15
     }
-    this.data = data;
+    this.data = _data;
     this.initVis();
   }
   

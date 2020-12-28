@@ -5,7 +5,7 @@ class FocusContextVis {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, data) {
+  constructor(_config, _data) {
     this.config = {
       parentElement: _config.parentElement,
       width:  800,
@@ -14,7 +14,7 @@ class FocusContextVis {
       margin: {top: 10, right: 10, bottom: 100, left: 45},
       contextMargin: {top: 280, right: 10, bottom: 20, left: 45}
     }
-    this.data = data;
+    this.data = _data;
     this.initVis();
   }
   

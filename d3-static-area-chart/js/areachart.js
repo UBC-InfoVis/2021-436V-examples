@@ -5,14 +5,14 @@ class AreaChart {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, data) {
+  constructor(_config, _data) {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 800,
       containerHeight: _config.containerHeight || 400,
       margin: _config.margin || {top: 25, right: 20, bottom: 30, left: 50}
     }
-    this.data = data;
+    this.data = _data;
     this.initVis();
   }
   

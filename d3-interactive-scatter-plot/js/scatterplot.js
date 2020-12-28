@@ -5,7 +5,7 @@ class Scatterplot {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, data) {
+  constructor(_config, _data) {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 600,
@@ -13,7 +13,7 @@ class Scatterplot {
       margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 35},
       tooltipPadding: _config.tooltipPadding || 15
     }
-    this.data = data;
+    this.data = _data;
     this.initVis();
   }
   

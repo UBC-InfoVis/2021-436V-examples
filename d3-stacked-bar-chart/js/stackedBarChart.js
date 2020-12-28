@@ -5,14 +5,14 @@ class StackedBarChart {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, data) {
+  constructor(_config, _data) {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: 400,
       containerHeight: 200,
       margin: {top: 10, right: 10, bottom: 30, left: 30},
     }
-    this.data = data;
+    this.data = _data;
     this.initVis();
   }
   

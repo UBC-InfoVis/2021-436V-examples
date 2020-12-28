@@ -5,15 +5,16 @@ class Barchart {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, _data) {
+  constructor(_config, _dispatcher, _data) {
     // Configuration object with defaults
     this.config = {
       parentElement: _config.parentElement,
       colorScale: _config.colorScale,
       containerWidth: _config.containerWidth || 260,
       containerHeight: _config.containerHeight || 300,
-      margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 40},
+      margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 40}
     }
+    this.dispatcher = _dispatcher;
     this.data = _data;
     this.initVis();
   }
@@ -123,14 +124,15 @@ class Barchart {
         .attr('y', d => vis.yScale(vis.yValue(d)))
         .attr('fill', d => vis.colorScale(vis.colorValue(d)))
         .on('click', function(event, d) {
-          const isActive = difficultyFilter.includes(d.key);
-          if (isActive) {
-            difficultyFilter = difficultyFilter.filter(f => f !== d.key); // Remove filter
-          } else {
-            difficultyFilter.push(d.key); // Append filter
-          }
-          filterData(); // Call global function to update scatter plot
-          d3.select(this).classed('active', !isActive); // Add class to style active filters with CSS
+          // Check if current category is active and toggle class
+          const isActive = d3.select(this).classed('active');
+          d3.select(this).classed('active', !isActive);
+
+          // Get the names of all active/filtered categories
+          const selectedCategories = vis.chart.selectAll('.bar.active').data().map(k => k.key);
+          
+          // Trigger filter event and pass array with the selected category names
+          vis.dispatcher.call('filterCategories', event, selectedCategories);
         });
 
     // Update axes

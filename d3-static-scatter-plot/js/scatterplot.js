@@ -5,7 +5,7 @@ class Scatterplot {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, data) {
+  constructor(_config, _data) {
     // Configuration object with defaults
     // Important: depending on your vis and the type of interactivity you need
     // you might want to use getter and setter methods for individual attributes
@@ -15,7 +15,7 @@ class Scatterplot {
       containerHeight: _config.containerHeight || 400,
       margin: _config.margin || {top: 25, right: 20, bottom: 20, left: 35}
     }
-    this.data = data;
+    this.data = _data;
     this.initVis();
   }
   
