@@ -106,9 +106,7 @@ class LineChart {
   }
 
   /**
-   * This function contains the D3 code for binding data to visual elements
-   * Important: the chart is not interactive yet and renderVis() is intended
-   * to be called only once; otherwise new paths would be added on top
+   * Bind data to visual elements
    */
   renderVis() {
     let vis = this;

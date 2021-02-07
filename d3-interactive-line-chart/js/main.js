@@ -6,7 +6,7 @@ const parseTime = d3.timeParse("%Y-%m-%d");
 let data, lineChart; 
 
 /**
- * Load data from CSV file asynchronously and render area chart
+ * Load data from CSV file asynchronously and render line chart
  */
 d3.csv('data/sp_500_index.csv')
   .then(_data => {
